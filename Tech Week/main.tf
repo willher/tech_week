@@ -30,24 +30,25 @@ resource "azurerm_virtual_network" "vn-1" {
   dynamic "subnet" {
     for_each = var.subnets
     content {
-      name = subnet.value["name"]
-      address_prefix = subnets.value["address_prefix"]
+      name = subnets.value["name"]
+      address_prefix = subnets.value["address_space"]
     }
   }
+}
 
 resource "azurerm_subnet" "internal" {
   name = "internal"
   resource_group_name = azurerm_resource_group.rg-1.name
-  vitual_network_name = azurerm_virtual_network.vn-1.name
-  address_prefix = ["10.0.2.0/24"]
+  virtual_network_name = azurerm_virtual_network.vn-1.name
+  address_prefixes = ["10.0.2.0/24"]
 }
 
 resource "azurerm_network_interface" "main" {
-  name = "${var.prefix}.nic"
-  location = azurerm_resource_group.main.location
+  name = "vm.nic"
+  location = azurerm_resource_group.rg-1.location
   resource_group_name = azurerm_resource_group.rg-1.name
 
-  ip_configurateion {
+  ip_configuration {
     name = "testconfig"
     subnet_id = azurerm_subnet.internal.id
     private_ip_address_allocation = "Dynamic"
@@ -56,8 +57,8 @@ resource "azurerm_network_interface" "main" {
 
 resource "azurerm_virtual_machine" "main" {
   name = var.vm_name
-  location = azurerm_resource_group.rg1.location
-  resource_group_name   = azurerm_resource_group.rg1.name
+  location = azurerm_resource_group.rg-1.location
+  resource_group_name   = azurerm_resource_group.rg-1.name
   network_interface_ids = [azurerm_network_interface.main.id]
   vm_size = "Standard_B2ms"
 
@@ -84,4 +85,30 @@ resource "azurerm_virtual_machine" "main" {
   tags = {
     environment = "staging"
   }
+}
+
+resource "azurerm_network_security_group" "secure" {
+  name = "networksecuritygroup"
+  location = azurerm_resource_group.rg-1.location
+  resource_group_name = azurerm_resource_group.rg-1.name
+
+  security_rule {
+    name = "rule_one"
+    priority = "100"
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "22, 3389, 80"
+    destination_port_range = "22, 2289, 80"
+    source_address_prefix = "*"
+}
+}
+
+resource "azurerm_storage_account" "storage" {
+name = "storageaccount"
+resource_group_name = azurerm_resource_group.rg-1.name
+location = azurerm_resource_group.rg-1.location
+account_tier = "Standard"
+account_replication_type = "GRS"
+account_kind = "Storage"
 }
