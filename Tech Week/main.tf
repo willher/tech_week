@@ -112,3 +112,45 @@ account_tier = "Standard"
 account_replication_type = "GRS"
 account_kind = "Storage"
 }
+
+resource "azurerm_frontdoor" "frontdoor" {
+  name = "frontdoor-service"
+  location = "Global"
+  resource_group_name = azurerm_resource_group.rg-1.name
+  enforce_backend_pools_certificate_name_check = false
+
+  routing_rule {
+    name = "routingrule1"
+    accepted_protocols = ["Http", "Https"]
+    patterns_to_match = ["/*"]
+    frontend_endpoints = ["frontend-endpoint-1"]
+    forwarding_configuration {
+      forwarding_protocol = "MatchRequest"
+      backend_pool_name = "Backend"
+    }
+  }
+
+  backend_pool_load_balancing {
+    name = "backend-load-balancer"
+  }
+
+  backend_pool_health_probe {
+    name = "backend-health-probe"
+  }
+
+  backend_pool {
+    name = "test-backend"
+    backend {
+      host_header = "wwww.google.com"
+      address = "www.google.com"
+      http_port = 80
+      https_port = 443
+    }
+  load_balancing_name = "backend-load-balancer"
+  health_probe_name = "backend-health-probe"
+  }
+  frontend_endpoint {
+    name = "frontend-endpoint"
+    host_name = "example-FrontDoor.azurefd.net"
+  }
+}
