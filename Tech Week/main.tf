@@ -36,11 +36,15 @@ resource "azurerm_virtual_network" "vn-1" {
   }
 }
 
-resource "azurerm_subnet" "internal" {
-  name                 = "internal"
-  resource_group_name  = azurerm_resource_group.rg-1.name
-  virtual_network_name = azurerm_virtual_network.vn-1.name
-  address_prefixes     = ["10.0.2.0/24"]
+# resource "azurerm_subnet" "internal-test-subnet" {
+#   name                 = "internal-subnet"
+#   resource_group_name  = azurerm_resource_group.rg-1.name
+#   virtual_network_name = azurerm_virtual_network.vn-1.name
+#   address_prefixes     = ["10.0.2.0/24"]
+# }
+
+locals {
+  sublist = tolist(azurerm_virtual_network.vn-1.subnet)
 }
 
 resource "azurerm_network_interface" "main" {
@@ -50,7 +54,7 @@ resource "azurerm_network_interface" "main" {
 
   ip_configuration {
     name                          = "testconfig"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     =  local.sublist.0.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -76,18 +80,18 @@ resource "azurerm_virtual_machine" "main" {
   }
   os_profile {
     computer_name  = "hostname"
-    admin_username = "admin"
+    admin_username = "whertwec"
     admin_password = "Password123!"
   }
   os_profile_linux_config {
-    disable_password_authentication = true
+    disable_password_authentication = false
   }
   tags = {
     environment = "staging"
   }
 }
 
-resource "azurerm_network_security_group" "secure" {
+resource "azurerm_network_security_group" "secure-group1" {
   name                = "networksecuritygroup"
   location            = azurerm_resource_group.rg-1.location
   resource_group_name = azurerm_resource_group.rg-1.name
@@ -98,14 +102,15 @@ resource "azurerm_network_security_group" "secure" {
     direction              = "Inbound"
     access                 = "Allow"
     protocol               = "Tcp"
-    source_port_range      = "22, 3389, 80"
-    destination_port_range = "22, 2289, 80"
+    source_port_range      = "80"
+    destination_port_range = "80"
     source_address_prefix  = "*"
+    destination_address_prefix = "*"
   }
 }
 
 resource "azurerm_storage_account" "storage" {
-  name                     = "storageaccount"
+  name                     = "whstorageaccount01"
   resource_group_name      = azurerm_resource_group.rg-1.name
   location                 = azurerm_resource_group.rg-1.location
   account_tier             = "Standard"
