@@ -21,6 +21,19 @@ source "azure-arm" "azure_image" {
 build {
   name = "testbuild"
   sources = ["azure-arm.azure_image"] 
+  azure_tags = {
+    ApplicationName     = var.ApplicationName
+    AppTypeRole         = var.AppTypeRole
+    DataProtection      = var.DataProtection
+    DRTier              = var.DRTier
+    Environment         = var.Environment
+    Location            = var.Location
+    NotificationContact = var.NotificationContact
+    ProductCostCenter   = var.ProductCostCenter
+    SupportResponseSLA  = var.SupportResponseSLA
+    WorkloadType        = var.WorkloadType
+    Owner               = var.Owner
+  }
 
 provisioner "ansible" {
     playbook_file = "../ansible/playbook.yaml"
