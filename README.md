@@ -39,7 +39,7 @@ First Header | Second Header
 This is the content I want under header One | This is content I want under header Two
 This is me making a second row | Hello from the second row, second column
 
-Yo, @johhess40 I'm trying to use mentions here
+Yo, @johhess40 I'm trying to use mentions here but https://google.com says that doesn't really work as intended right now
 
 ~~This was an error I needed to cross out~~
 
