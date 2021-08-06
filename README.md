@@ -27,3 +27,20 @@ playbook.yaml updates VM, downloads NGINX, runs a yum install of the image, crea
 nginx.conf contains the configuration information for nginx including having port 80 open. 
 
 index.html serves up a basic 'Hello World' html file
+
+## README.md
+
+As John said:
+
+> Read the documentation and practice doing stuff in markdown language!
+
+First Header | Second Header
+------------ | -------------
+This is the content I want under header One | This is content I want under header Two
+This is me making a second row | Hello from the second row, second column
+
+Yo, @johhess40 I'm trying to use mentions here
+
+~~This was an error I needed to cross out~~
+
+Oh and yes, markdown supports emojis :grinning: :smile: :hole:
