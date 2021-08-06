@@ -2,7 +2,7 @@
 
 You can contact me with any questions via Microsoft teams or email: willis.hertweck@cdw.com
 
-## terraform
+## Terraform
 
 Use the main.tf file to generate Azure resource group and the other items outlines by Tech Week Labs.  
 
